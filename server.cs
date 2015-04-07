@@ -7,6 +7,8 @@ $Pref::Take::DefaultColor = 0;
 $Pref::Take::PlayAreaSize = 375;
 $Pref::Take::PlayAreaHeight = 175;
 
+$Take::Version = "v0.1";
+
 datablock AudioProfile(takeJumpSound:combo1) { filename = "./sounds/jump.wav"; };
 
 PlayerStandardArmor.airControl = 1;

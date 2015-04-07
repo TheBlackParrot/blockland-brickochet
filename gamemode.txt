@@ -15,7 +15,7 @@ ADDON Sound_Synth4
 ADDON Server_CloudPreferences
 
 // gamemode scripts
-ADDON Gamemode_Take
+ADDON Gamemode_Brickochet
 
 //music
 

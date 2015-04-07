@@ -1,7 +1,7 @@
 <color:0000ff>================
 <color:00ffff>Welcome to TheBlackParrot's Take(placeholder)!
 <color:ffffff>This is under heavy development, so bugs and weird things are bound to occur. Please report them immediately if you come across any.
-<color:999999>GITHUB REPO SOON
+<a:github.com/TheBlackParrot/blockland-brickochet>GitHub Repository</a> \c7|| <a:github.com/TheBlackParrot/blockland-brickochet/issues>Issues/To-do List</a>
 <color:ff00ff>==-- GAMEMODE INFO --==
 <color:ff00bb>-- YOUR GOAL --
 <color:ffffff>You want your lasers to hit as many bricks as possible within 10 minute rounds. The winner is decided by who "owns" the most bricks after the round is over.
@@ -15,6 +15,8 @@
 <color:ffffff>Your game loads when you enter the server, and it would be pointless to re-load your data manually due to the way it saves.
 <color:ffffff>Your data is fine, trust me.
 <color:ff00ff>==-- CHANGELOG --==
+<color:22ffaa>v0.1 <color:999999>[04/07/2015] <color:ffffff>-- code now public, added shrapnel bombs, /leaderboard command, sky flashes when a laser explodes, max cubes increased from 4096 to 5632
+<color:22ffaa>indev2-3 <color:999999>[04/06/2015] <color:ffffff>-- more bugfixes
 <color:22ffaa>indev2-2 <color:999999>[04/05/2015] <color:ffffff>-- bug fixes
 <color:22ffaa>indev2-1 <color:999999>[04/05/2015] <color:ffffff>-- bottom print revamp, end-of-round stats, fixed explosions
 <color:22ffaa>indev1-2 <color:999999>[04/05/2015] <color:ffffff>-- fixed issues with reset schedules
