@@ -7,7 +7,7 @@ $Pref::Take::DefaultColor = 0;
 $Pref::Take::PlayAreaSize = 375;
 $Pref::Take::PlayAreaHeight = 175;
 
-$Take::Version = "v0.1.1";
+$Take::Version = "v0.1.2";
 
 datablock AudioProfile(takeJumpSound:combo1) { filename = "./sounds/jump.wav"; };
 
@@ -24,8 +24,8 @@ PlayerStandardArmor.mass = 25;
 PlayerStandardArmor.jumpDelay = 0;
 PlayerStandardArmor.jumpSound = takeJumpSound;
 
-function createCube(%x,%y,%z) {
-	if(!getRandom(0,80) && %z >= $Pref::Take::PlayAreaHeight/3) {
+function createCube(%x,%y,%z,%bomb) {
+	if((!getRandom(0,80) && %z >= $Pref::Take::PlayAreaHeight/3) || %bomb) {
 		%shapeFX = 1;
 	}
 	%brick = new fxDTSBrick(TakeBrick) {
@@ -52,14 +52,14 @@ function createCube(%x,%y,%z) {
 	return %error SPC %brick;
 }
 
-function spawnRandomCubes(%amount) {
+function spawnRandomCubes(%amount,%bombs) {
 	while(%amount > 0) {
-		%error_check = createCube(getRandom(0,$Pref::Take::PlayAreaSize),getRandom(0,$Pref::Take::PlayAreaSize),getRandom(0,$Pref::Take::PlayAreaHeight)+$Pref::Take::VerticalOffset);
+		%error_check = createCube(getRandom(0,$Pref::Take::PlayAreaSize),getRandom(0,$Pref::Take::PlayAreaSize),getRandom(0,$Pref::Take::PlayAreaHeight)+$Pref::Take::VerticalOffset,%bombs);
 		%error_val = getWord(%error_check,0);
 		%brick = getWord(%error_check,1);
 		while(%error_val && %error_val != 2) {
 			%brick.delete();
-			%error_check = createCube(getRandom(0,$Pref::Take::PlayAreaSize),getRandom(0,$Pref::Take::PlayAreaSize),getRandom(0,$Pref::Take::PlayAreaHeight)+$Pref::Take::VerticalOffset);
+			%error_check = createCube(getRandom(0,$Pref::Take::PlayAreaSize),getRandom(0,$Pref::Take::PlayAreaSize),getRandom(0,$Pref::Take::PlayAreaHeight)+$Pref::Take::VerticalOffset,%bombs);
 			%error_val = getWord(%error_check,0);
 			%brick = getWord(%error_check,1);
 		}
@@ -268,9 +268,20 @@ function MinigameSO::endRound(%this) {
 
 	%this.showRoundStats();
 
+	cancel(%this.bombAddLoop);
+
 	%color = "<color:" @ RGBToHex(getColorIDTable(%highest[client].color)) @ ">";
 	%this.messageAll('',%color @ %highest[client].name SPC "\c6wins this round, owning\c3" SPC mFloor(%highest[client].getPercentageValue("players")*10)/10 @ "% \c6of the board.");
 	%this.messageAll('',"\c5Resetting in \c310 seconds...");
+}
+
+function MinigameSO::addBombs(%this,%override) {
+	cancel(%this.bombAddLoop);
+	%this.bombAddLoop = %this.schedule(45000,addBombs);
+
+	%amount = %override | mCeil(%this.numMembers/4) * 2;
+	%this.messageAll('',"\c3" @ %amount SPC "more bombs\c6 have spawned!");
+	spawnRandomCubes(%amount,1);
 }
 
 package TakeGamePackage {
@@ -362,6 +373,7 @@ package TakeGamePackage {
 			%this.loading = 0;
 			%this.endRoundAt = getSimTime() + 600000;
 			%this.endSchedule = %this.schedule(600000,endRound);
+			%this.addBombs();
 			%this.rounds++;
 			messageAll('',"\c5Beginning \c3round" SPC %this.rounds);
 			for(%i=0;%i<%this.numMembers;%i++) {
