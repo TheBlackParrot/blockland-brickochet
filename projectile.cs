@@ -479,7 +479,7 @@ package BrickochetProjectilePackage {
 			initialPosition = %this.initialPosition;
 			initialVelocity = %this.initialVelocity;
 			position = %this.getPosition();
-			rotation = %this.rotation();
+			rotation = %this.rotation;
 			scale = "1 1 1";
 			sourceObject = %this.sourceObject;
 			sourceSlot = %this.sourceSlot;
