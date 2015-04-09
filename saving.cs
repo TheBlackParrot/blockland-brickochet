@@ -4,7 +4,7 @@ function GameConnection::saveTakeGame(%this) {
 	%file = new FileObject();
 	%file.openForWrite($Pref::Take::SaveDir @ "/" @ %this.bl_id);
 
-	%file.writeLine("client" TAB "clanSymbol" TAB %this.clanSymbol TAB "str");
+	%file.writeLine("client" TAB "score" TAB %this.score TAB "int");
 	%file.writeLine("client" TAB "highestCombo" TAB %this.highestCombo TAB "int");
 
 	%file.close();

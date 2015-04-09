@@ -7,7 +7,7 @@ $Pref::Take::DefaultColor = 0;
 $Pref::Take::PlayAreaSize = 375;
 $Pref::Take::PlayAreaHeight = 175;
 
-$Take::Version = "v0.1.2";
+$Take::Version = "v0.1.3";
 
 datablock AudioProfile(takeJumpSound:combo1) { filename = "./sounds/jump.wav"; };
 
@@ -207,16 +207,10 @@ function GameConnection::doBottomStats(%this) {
 	}
 
 	if(isObject(%this.projectile)) {
-		%projtime = mFloor((getSimTime() - %this.firedAt)/100)/10;
-		if(stripos(%projtime,".") == -1) {
-			%projtime = %projtime @ ".0";
-		}
+		%projtime = mFloatLength((getSimTime() - %this.firedAt)/1000,1);
 		
 		%vel = %this.projectile.getVelocity();
-		%speed = mFloor((mAbs(getWord(%vel,0)) + mAbs(getWord(%vel,1)) + mAbs(getWord(%vel,2)))*10/3)/10;
-		if(stripos(%speed,".") == -1) {
-			%speed = %speed @ ".0";
-		}
+		%speed = mFloatLength((mAbs(getWord(%vel,0)) + mAbs(getWord(%vel,1)) + mAbs(getWord(%vel,2)))/3,1);
 
 		%combo = "\c7" @ %projtime @ "  \c3" @ %speed @ "tu  \c0" @ (%this.projectile.combo | 0) @ "x";
 	} else {
@@ -240,12 +234,12 @@ function MinigameSO::showRoundStats(%this) {
 		%rank[%rank_v] = %client;
 	}
 	for(%i=1;%i<=%count;%i++) {
-		%str = %str @ "<just:left>\c2#" @ %i @ ".\c6" SPC %rank[%i].name @ "<just:right>\c3" @ %rank[%i].amountHas SPC "\c7[" @ %rank[%i].getPercentageValue("players") @ "%]";
+		%str = %str @ "<just:left>\c2#" @ %i @ ".\c6" SPC %rank[%i].name @ "<just:right>\c3" @ %rank[%i].amountHas SPC "\c7[" @ mFloatLength(%rank[%i].getPercentageValue("players"),1) @ "%]";
 	}
 	if(%this.numMembers > 3) {
 		messageAll('',"-- OTHER POSITIONS --");
 		for(%i=4;%i<%this.numMembers+1;%i++) {
-			%this.messageAll('',"<just:left>\c2#" @ %i @ ".\c6" SPC %rank[%i].name @ "\c7 -- \c3" @ %rank[%i].amountHas SPC "\c7[" @ %rank[%i].getPercentageValue("players") @ "%]");
+			%this.messageAll('',"<just:left>\c2#" @ %i @ ".\c6" SPC %rank[%i].name @ "\c7 -- \c3" @ %rank[%i].amountHas SPC "\c7[" @ mFloatLength(%rank[%i].getPercentageValue("players"),1) @ "%]");
 		}
 	}
 	%this.centerPrintAll(%str,10);
@@ -333,7 +327,7 @@ package TakeGamePackage {
 		if(!%this.client.minigame.allowProjectiles) {
 			return parent::activateStuff(%this);
 		}
-		%this.spawnProjectile(100,"takeGameProjProjectile" @ %this.client.color,0,1,%this.client);
+		%this.spawnProjectile(200,"takeGameProjProjectile" @ %this.client.color,0,1,%this.client);
 		%this.client.firedAt = getSimTime();
 
 		serverPlay3D(takeProjFire,%this.getPosition());

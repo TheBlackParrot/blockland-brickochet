@@ -119,7 +119,7 @@ function createDynamicTGProjectiles() {
 		TempTGDatablock1.setName("takeGameProjTrailParticle" @ %i);
 
 		datablock ParticleEmitterData(TempTGDatablock2) {
-			ejectionPeriodMS = 4;
+			ejectionPeriodMS = 2;
 			periodVarianceMS = 0;
 			ejectionVelocity = 0.0;
 			velocityVariance = 0.0;
@@ -276,6 +276,11 @@ function fxDTSBrick::onLaserHit(%this,%obj) {
 
 		if(%this.takenBy != %client) {
 			%obj.combo++;
+			%obj.client.score += %obj.combo;
+			if(%this.takenBy !$= "") {
+				%obj.client.score += 20;
+			}
+
 			if(%obj.combo >= 5) {
 				%sound = "combo" @ %obj.combo-4;
 				if(!isObject(%sound)) {
