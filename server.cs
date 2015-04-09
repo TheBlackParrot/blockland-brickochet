@@ -7,7 +7,7 @@ $Pref::Take::DefaultColor = 0;
 $Pref::Take::PlayAreaSize = 375;
 $Pref::Take::PlayAreaHeight = 175;
 
-$Take::Version = "v0.1";
+$Take::Version = "v0.1.1";
 
 datablock AudioProfile(takeJumpSound:combo1) { filename = "./sounds/jump.wav"; };
 
@@ -114,23 +114,7 @@ function GameConnection::getRank(%this) {
 		}
 		%selected[%highest[client]] = 1;
 	}
-	//return (%rank[%this] | -1);
 	return %rank[%this];
-
-	//for(%i=0;%i<$DefaultMinigame.numMembers;%i++) {
-	//	%highest = -1;
-	//	%client = $DefaultMinigame.member[%i];
-	//	if(%client.amountHas > %highest && !%selected[%client]) {
-	//		%highest = %client.amountHas;
-	//		%highest[client] = %client;
-	//	}
-	//	if(%i == $DefaultMinigame.numMembers-1) {
-	//		%selected[%highest[client]] = 1;
-	//		if(%this == %highest[client]) {
-	//			return %i+1;
-	//		}
-	//	}
-	//}
 }
 
 function MinigameSO::playSound(%this,%datablock) {
@@ -227,11 +211,15 @@ function GameConnection::doBottomStats(%this) {
 		if(stripos(%projtime,".") == -1) {
 			%projtime = %projtime @ ".0";
 		}
-		%combo = "\c7" @ %projtime @ "  \c0" @ (%this.projectile.combo | 0) @ "x";
+		
+		%vel = %this.projectile.getVelocity();
+		%speed = mFloor((mAbs(getWord(%vel,0)) + mAbs(getWord(%vel,1)) + mAbs(getWord(%vel,2)))/3);
+
+		%combo = "\c7" @ %projtime @ "  \c3" @ %speed @ "tu  \c0" @ (%this.projectile.combo | 0) @ "x";
 	} else {
 		%combo = "\c2" @ (%this.projectile.combo | 0) @ "x";
 	}
-	%this.bottomPrint("<font:Arial Bold:48>" @ %color @ getPositionString(%rank) @ "    <font:Arial Bold:32><color:ffffff>" @ %shadow @ %this.perc[1] @ "%<shadow:0:0><font:Arial Bold:24>" @ %color @ " [" @ %this.amountHas @ "]<just:right><font:Arial Bold:18>" @ %combo @ "    <font:Arial:14>\c6" SPC %time @ " ",3,1);
+	%this.bottomPrint("<font:Arial Bold:48>" @ %color @ getPositionString(%rank) @ "    <font:Arial Bold:32><color:ffffff>" @ %shadow @ %this.amountHas @ "<shadow:0:0><font:Arial Bold:24>" @ %color @ " [" @ %this.perc[1] @ "%]<just:right><font:Arial Bold:18>" @ %combo @ "    <font:Arial:14>\c6" SPC %time @ " ",3,1);
 
 	%this.oldRank = %this.getRank();
 }
