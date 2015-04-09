@@ -345,7 +345,7 @@ function takeGameProjProjectileClass::onExplode(%this,%obj) {
 	if(%obj.combo > %client.highestCombo) {
 		%client.highestCombo = %obj.combo;
 	}
-	if(%obj.combo >= 10) {
+	if(%obj.combo >= 20) {
 		%color = "<color:" @ RGBToHex(getColorIDTable(%client.color)) @ ">";
 		$DefaultMinigame.messageAll('',%color @ %client.name SPC "\c6obtained a\c3 x" @ %obj.combo SPC "combo!");
 	}
@@ -357,7 +357,7 @@ function takeGameProjProjectileClass::onExplode(%this,%obj) {
 }
 
 function Sky::flashColor(%this,%client,%step) {
-	%maxsteps = 8;
+	%maxsteps = mCeil(mCeil(30/$DefaultMinigame.numMembers)/1.5);
 	cancel(%this.flashSched);
 	if(%step < %maxsteps) {
 		%this.flashSched = %this.schedule(50,flashColor,%client,%step+1);

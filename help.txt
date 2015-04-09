@@ -15,7 +15,7 @@
 <color:ffffff>Your game loads when you enter the server, and it would be pointless to re-load your data manually due to the way it saves.
 <color:ffffff>Your data is fine, trust me.
 <color:ff00ff>==-- CHANGELOG --==
-<color:22ffaa>v0.1.2 <color:999999>[04/08/2015] <color:ffffff>-- more bombs dynamically spawn in
+<color:22ffaa>v0.1.2 <color:999999>[04/08/2015] <color:ffffff>-- more bombs dynamically spawn in, added tenths to speed, x20 new max for combo messages, sky flashing scales with player count
 <color:22ffaa>v0.1.1 <color:999999>[04/08/2015] <color:ffffff>-- swapped % and # of cubes in the bottom print, added speed
 <color:22ffaa>v0.1 <color:999999>[04/07/2015] <color:ffffff>-- code now public, added shrapnel bombs, /leaderboard command, sky flashes when a laser explodes, max cubes increased from 4096 to 5632
 <color:22ffaa>indev2-3 <color:999999>[04/06/2015] <color:ffffff>-- more bugfixes

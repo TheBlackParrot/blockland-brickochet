@@ -213,7 +213,10 @@ function GameConnection::doBottomStats(%this) {
 		}
 		
 		%vel = %this.projectile.getVelocity();
-		%speed = mFloor((mAbs(getWord(%vel,0)) + mAbs(getWord(%vel,1)) + mAbs(getWord(%vel,2)))/3);
+		%speed = mFloor((mAbs(getWord(%vel,0)) + mAbs(getWord(%vel,1)) + mAbs(getWord(%vel,2)))*10/3)/10;
+		if(stripos(%speed,".") == -1) {
+			%speed = %speed @ ".0";
+		}
 
 		%combo = "\c7" @ %projtime @ "  \c3" @ %speed @ "tu  \c0" @ (%this.projectile.combo | 0) @ "x";
 	} else {
