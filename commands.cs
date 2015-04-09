@@ -12,6 +12,7 @@ function serverCmdCancel(%this) {
 		return;
 	}
 	
+	%this.projectile.markedForExplosion = 1;
 	%this.projectile.explode();
 }
 

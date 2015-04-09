@@ -9,7 +9,7 @@ $Pref::Take::DefaultColor = 0;
 $Pref::Take::PlayAreaSize = 375;
 $Pref::Take::PlayAreaHeight = 175;
 
-$Take::Version = "v0.1.4";
+$Take::Version = "v0.1.5";
 
 datablock AudioProfile(takeJumpSound:combo1) { filename = "./sounds/jump.wav"; };
 
@@ -203,6 +203,8 @@ package TakeGamePackage {
 		%this.color = %color;
 
 		%this.loadTakeGame();
+
+		messageClient(%this,'',"\c4HOW TO PLAY: \c6Left click to fire lasers that bounce off of cubes in the arena. Whoever owns the most after 10 minutes wins the round. See /help for more info.");
 		return parent::autoAdminCheck(%this);
 	}
 

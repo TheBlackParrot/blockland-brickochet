@@ -14,6 +14,7 @@ datablock AudioProfile(takeProjHit:combo1) { filename = "./sounds/hit.wav"; };
 datablock AudioProfile(takeShrapnelHit:combo1) { filename = "./sounds/shrapnel_hit.wav"; };
 datablock AudioProfile(takeProjFire:combo1) { filename = "./sounds/fire.wav"; };
 datablock AudioProfile(takeProjHitBomb:combo1) { filename = "./sounds/bomb.wav"; };
+datablock AudioProfile(takeProjHitSteal:combo1) { filename = "./sounds/steal.wav"; };
 
 datablock ParticleData(takeGameProjExplosionParticle)
 {
@@ -231,6 +232,7 @@ package takeGameProjPackage {
 		if(%obj.getDatablock().classname $= "takeGameProjProjectileClass") {
 			%obj.checkPosition();
 			%obj.client.projectile = %obj;
+			%obj.setName("Laser" @ %obj.getID());
 		}
 		if(%obj.getDatablock().classname $= "takeGameProjShrapnelClass") {
 			if($Take::Shrapnel $= "") {
@@ -306,8 +308,9 @@ function fxDTSBrick::onLaserHit(%this,%obj) {
 					%this.playSound(takeShrapnelHit);
 			}
 
-			if(%this.takenBy !$= "") {
+			if(%this.takenBy !$= "" && %this.takenBy != -1) {
 				%this.takenBy.amountHas--;
+				%this.takenBy.play2D(takeProjHitSteal);
 			}
 			%client.amountHas++;
 		}
@@ -353,21 +356,42 @@ function takeGameProjShrapnelClass::onCollision(%this,%obj,%col,%fade,%pos,%norm
 function takeGameProjProjectileClass::onExplode(%this,%obj) {
 	%client = %obj.client;
 
-	%client.play2D(takeProjExplode);
-	if(%obj.combo > %client.highestCombo) {
-		%client.highestCombo = %obj.combo;
-	}
-	if(%obj.combo >= 20) {
-		%color = "<color:" @ RGBToHex(getColorIDTable(%client.color)) @ ">";
-		$DefaultMinigame.messageAll('',%color @ %client.name SPC "\c6obtained a\c3 x" @ %obj.combo SPC "combo!");
-	}
-	cancel(%obj.positionLoop);
+	if(%obj.markedForExplosion) {
+		%client.play2D(takeProjExplode);
+		if(%obj.combo > %client.highestCombo) {
+			%client.highestCombo = %obj.combo;
+		}
+		if(%obj.combo >= 20) {
+			%color = "<color:" @ RGBToHex(getColorIDTable(%client.color)) @ ">";
+			$DefaultMinigame.messageAll('',%color @ %client.name SPC "\c6obtained a\c3 x" @ %obj.combo SPC "combo!");
+		}
+		cancel(%obj.positionLoop);
 
-	echo(%obj);
-
-	Sky.flashColor(%client,1);
+		Sky.flashColor(%client,1);
 	
-	%client.saveTakeGame();
+		%client.saveTakeGame();
+		return;
+	}
+
+	%proj = new Projectile(TempProjectile) {
+		dataBlock = %obj.dataBlock;
+		initialPosition = %obj.getPosition();
+		initialVelocity = %obj.getVelocity();
+		position = %obj.getPosition();
+		rotation = %obj.rotation;
+		scale = "1 1 1";
+		sourceObject = %obj.sourceObject;
+		sourceSlot = %obj.sourceSlot;
+		client = %obj.client;
+		originPoint = %obj.getPosition();
+		sourceClient = %obj.sourceClient;
+		combo = %obj.combo;
+	};
+	MissionCleanup.add(%proj);
+	%proj.setName("Laser" @ %proj.getID());
+	%client.projectile = %proj;
+	%proj.checkPosition();
+	%obj.delete();
 }
 
 function Sky::flashColor(%this,%client,%step) {
@@ -409,6 +433,7 @@ function Projectile::checkPosition(%this) {
 		if(%z > $Pref::Take::PlayAreaHeight && getWord(%this.getVelocity(),2) < 0) {
 			return;
 		}
+		%this.markedForExplosion = 1;
 		%this.explode();
 
 		// fixing issues with weird explosion placement
@@ -438,6 +463,38 @@ package BrickochetProjectilePackage {
 			}
 		}
 		parent::delete(%this);
+	}
+
+	function Projectile::explode(%this) {
+		if(%this.getDatablock().classname !$= "takeGameProjProjectileClass") {
+			parent::explode(%this);
+		}
+		if(%this.markedForExplosion) {
+			parent::explode(%this);
+			return;
+		}
+		//%name = "Laser" @ %this.getID();
+		%proj = new Projectile(TempProjectile) {
+			dataBlock = %this.dataBlock;
+			initialPosition = %this.initialPosition;
+			initialVelocity = %this.initialVelocity;
+			position = %this.getPosition();
+			rotation = %this.rotation();
+			scale = "1 1 1";
+			sourceObject = %this.sourceObject;
+			sourceSlot = %this.sourceSlot;
+			client = %this.client;
+			originPoint = %this.originPoint;
+			sourceClient = %this.sourceClient;
+			combo = %this.combo;
+		};
+		MissionCleanup.add(%proj);
+		%proj.setName("Laser" @ %proj.getID());
+
+		%this.client.projectile = %proj;
+		%proj.checkPosition();
+
+		%this.delete();
 	}
 };
 activatePackage(BrickochetProjectilePackage);
