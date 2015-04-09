@@ -1,3 +1,5 @@
+exec("./support.cs");
+exec("./build.cs");
 exec("./projectile.cs");
 exec("./commands.cs");
 exec("./saving.cs");
@@ -7,7 +9,7 @@ $Pref::Take::DefaultColor = 0;
 $Pref::Take::PlayAreaSize = 375;
 $Pref::Take::PlayAreaHeight = 175;
 
-$Take::Version = "v0.1.3";
+$Take::Version = "v0.1.4";
 
 datablock AudioProfile(takeJumpSound:combo1) { filename = "./sounds/jump.wav"; };
 
@@ -23,49 +25,6 @@ PlayerStandardArmor.upMaxSpeed = 160;
 PlayerStandardArmor.mass = 25;
 PlayerStandardArmor.jumpDelay = 0;
 PlayerStandardArmor.jumpSound = takeJumpSound;
-
-function createCube(%x,%y,%z,%bomb) {
-	if((!getRandom(0,80) && %z >= $Pref::Take::PlayAreaHeight/3) || %bomb) {
-		%shapeFX = 1;
-	}
-	%brick = new fxDTSBrick(TakeBrick) {
-		angleID = 0;
-		colorFxID = 3;
-		colorID = $Pref::Take::DefaultColor;
-		//colorID = getRandom(1,63);
-		dataBlock = "brick16xCubeData";
-		isBasePlate = 1;
-		isPlanted = 1;
-		position = %x SPC %y SPC %z;
-		printID = 0;
-		scale = "1 1 1";
-		shapeFxID = (%shapeFX | 0);
-		stackBL_ID = 888888;
-		takenBy = -1;
-		enableTouch = 1;
-	};
-	BrickGroup_888888.add(%brick);
-	%brick.setTrusted(1);
-	%error = %brick.plant();
-	%brick.setColliding(0);
-
-	return %error SPC %brick;
-}
-
-function spawnRandomCubes(%amount,%bombs) {
-	while(%amount > 0) {
-		%error_check = createCube(getRandom(0,$Pref::Take::PlayAreaSize),getRandom(0,$Pref::Take::PlayAreaSize),getRandom(0,$Pref::Take::PlayAreaHeight)+$Pref::Take::VerticalOffset,%bombs);
-		%error_val = getWord(%error_check,0);
-		%brick = getWord(%error_check,1);
-		while(%error_val && %error_val != 2) {
-			%brick.delete();
-			%error_check = createCube(getRandom(0,$Pref::Take::PlayAreaSize),getRandom(0,$Pref::Take::PlayAreaSize),getRandom(0,$Pref::Take::PlayAreaHeight)+$Pref::Take::VerticalOffset,%bombs);
-			%error_val = getWord(%error_check,0);
-			%brick = getWord(%error_check,1);
-		}
-		%amount--;
-	}
-}
 
 function GameConnection::getPercentageValue(%this,%which) {
 	if(%which $= "") {
@@ -115,66 +74,6 @@ function GameConnection::getRank(%this) {
 		%selected[%highest[client]] = 1;
 	}
 	return %rank[%this];
-}
-
-function MinigameSO::playSound(%this,%datablock) {
-	if(!isObject(%datablock)) {
-		warn("Unable to find sound" SPC %datablock);
-		return;
-	}
-	for(%i=0;%i<%this.numMembers;%i++) {
-		%this.member[%i].play2D(%datablock);
-	}
-}
-
-function RGBToHex(%rgb) {
-	%rgb = getWords(%rgb,0,2);
-	for(%i=0;%i<getWordCount(%rgb);%i++) {
-		%dec = mFloor(getWord(%rgb,%i)*255);
-		%str = "0123456789ABCDEF";
-		%hex = "";
-
-		while(%dec != 0) {
-			%hexn = %dec % 16;
-			%dec = mFloor(%dec / 16);
-			%hex = getSubStr(%str,%hexn,1) @ %hex;    
-		}
-
-		if(strLen(%hex) == 1)
-			%hex = "0" @ %hex;
-		if(!strLen(%hex))
-			%hex = "00";
-
-		%hexstr = %hexstr @ %hex;
-	}
-
-	if(%hexstr $= "") {
-		%hexstr = "FF00FF";
-	}
-	return %hexstr;
-}
-
-function getPositionString(%num) {
-	if(strLen(%num)-2 >= 0) {
-		%ident = getSubStr(%num,strLen(%num)-2,2);
-	} else {
-		%ident = %num;
-	}
-	if(%ident >= 10 && %ident < 20) {
-		return %num @ "th";
-	}
-
-	%ident = getSubStr(%num,strLen(%num)-1,1);
-	switch(%ident) {
-		case 1:
-			return %num @ "st";
-		case 2:
-			return %num @ "nd";
-		case 3:
-			return %num @ "rd";
-		default:
-			return %num @ "th";	
-	}
 }
 
 // for things that need to be called only every so often
@@ -258,6 +157,15 @@ function MinigameSO::endRound(%this) {
 			%highest[client] = %client;
 		}
 	}
+	for(%i=0;%i<getWordCount($Take::Shrapnel);%i++) {
+		%obj = strReplace(getWord($Take::Shrapnel,%i),"S","");
+		if(isObject(%obj)) {
+			%obj.delete();
+		} else {
+			$Take::Shrapnel = removeWord($Take::Shrapnel,%i);
+		}
+	}
+
 	%this.allowProjectiles = 0;
 	if(%this.numMembers > 0) {
 		%this.resetSchedule = %this.schedule(10000,reset);

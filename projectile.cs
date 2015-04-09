@@ -232,6 +232,13 @@ package takeGameProjPackage {
 			%obj.checkPosition();
 			%obj.client.projectile = %obj;
 		}
+		if(%obj.getDatablock().classname $= "takeGameProjShrapnelClass") {
+			if($Take::Shrapnel $= "") {
+				$Take::Shrapnel = "S" @ %obj @ "S";
+			} else {
+				$Take::Shrapnel = "S" @ %obj @ "S" SPC $Take::Shrapnel;
+			}
+		}
 		return parent::onAdd(%this,%obj);
 	}
 };
@@ -356,6 +363,8 @@ function takeGameProjProjectileClass::onExplode(%this,%obj) {
 	}
 	cancel(%obj.positionLoop);
 
+	echo(%obj);
+
 	Sky.flashColor(%client,1);
 	
 	%client.saveTakeGame();
@@ -413,3 +422,22 @@ function Projectile::checkPosition(%this) {
 		//MissionCleanup.add(%explosion);
 	}
 }
+
+package BrickochetProjectilePackage {
+	function Projectile::delete(%this) {
+		if(%this.getDatablock().classname $= "takeGameProjShrapnelClass") {
+			%str = "S" @ %this @ "S";
+			if(stripos($Take::Shrapnel,%str) != -1) {
+				for(%i=0;%i<getWordCount($Take::Shrapnel);%i++) {
+					%obj = strReplace(getWord($Take::Shrapnel,%i),"S","");
+					if(%obj == %this) {
+						$Take::Shrapnel = removeWord($Take::Shrapnel,%i);
+						break;
+					}
+				}
+			}
+		}
+		parent::delete(%this);
+	}
+};
+activatePackage(BrickochetProjectilePackage);
