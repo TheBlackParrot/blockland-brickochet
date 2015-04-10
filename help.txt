@@ -14,21 +14,10 @@
 <color:ffffff>Both saving and loading is automatic. Every time your laser explodes, your game saves. Crashes + data loss is a thing of the past.
 <color:ffffff>Your game loads when you enter the server, and it would be pointless to re-load your data manually due to the way it saves.
 <color:ffffff>Your data is fine, trust me.
-<color:ff00ff>==-- CHANGELOG --==
-<color:22ffaa>v0.1.5 <color:999999>[04/09/2015] <color:ffffff>-- projectiles now last for infinity (broken atm), stolen cubes play a sound to the original owner, how-to-play upon connecting
-<color:22ffaa>v0.1.4 <color:999999>[04/09/2015] <color:ffffff>-- organized code better, shrapnel now deleted upon round end
-<color:22ffaa>v0.1.3 <color:999999>[04/09/2015] <color:ffffff>-- added score system (1*combo per hit), laser speed doubled, discovered mFloatLength was a thing
-<color:22ffaa>v0.1.2 <color:999999>[04/08/2015] <color:ffffff>-- more bombs dynamically spawn in, added tenths to speed, x20 new max for combo messages, sky flashing scales with player count
-<color:22ffaa>v0.1.1 <color:999999>[04/08/2015] <color:ffffff>-- swapped % and # of cubes in the bottom print, added speed
-<color:22ffaa>v0.1 <color:999999>[04/07/2015] <color:ffffff>-- code now public, added shrapnel bombs, /leaderboard command, sky flashes when a laser explodes, max cubes increased from 4096 to 5632
-<color:22ffaa>indev2-3 <color:999999>[04/06/2015] <color:ffffff>-- more bugfixes
-<color:22ffaa>indev2-2 <color:999999>[04/05/2015] <color:ffffff>-- bug fixes
-<color:22ffaa>indev2-1 <color:999999>[04/05/2015] <color:ffffff>-- bottom print revamp, end-of-round stats, fixed explosions
-<color:22ffaa>indev1-2 <color:999999>[04/05/2015] <color:ffffff>-- fixed issues with reset schedules
-<color:22ffaa>indev1-1 <color:999999>[04/05/2015] <color:ffffff>-- initial appearance of server
 <color:ff00ff>==-- COMMANDS --==
-<color:ffee00>/help <color:ffffff>-- This command you're reading.
-<color:ffee00>/changeSymbol <color:ff00ff>[# or blank] <color:ffffff>-- Changes the symbol beside your name in chat, this is just to show other players your color.
-<color:ffee00>/changeColor <color:ffffff>-- Changes the color you use in the game. <color:44bbff>USE THE PAINT CAN TO CHOOSE A COLOR. You CANNOT choose the first color.
 <color:ffee00>/cancel <color:ffffff>-- Cancels your current laser.
+<color:ffee00>/changeColor <color:ffffff>-- Changes the color you use in the game. <color:44bbff>USE THE PAINT CAN TO CHOOSE A COLOR. You CANNOT choose the first color.
+<color:ffee00>/changelog <color:ffffff>-- View updates to the gamemode and server.
+<color:ffee00>/leaderboard <color:ffffff>-- Shows the current leaderboard.
+<color:ffee00>/help <color:ffffff>-- This command you're reading.
 <color:0000ff>================

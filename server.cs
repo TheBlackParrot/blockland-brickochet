@@ -9,7 +9,7 @@ $Pref::Take::DefaultColor = 0;
 $Pref::Take::PlayAreaSize = 375;
 $Pref::Take::PlayAreaHeight = 175;
 
-$Take::Version = "v0.1.5-3";
+$Take::Version = "v0.1.6-1";
 
 datablock AudioProfile(takeJumpSound:combo1) { filename = "./sounds/jump.wav"; };
 
@@ -157,14 +157,13 @@ function MinigameSO::endRound(%this) {
 			%highest[client] = %client;
 		}
 	}
-	for(%i=0;%i<getWordCount($Take::Shrapnel);%i++) {
-		%obj = strReplace(getWord($Take::Shrapnel,%i),"S","");
-		if(isObject(%obj)) {
-			%obj.delete();
-		} else {
-			$Take::Shrapnel = removeWord($Take::Shrapnel,%i);
+	for(%i=0;%i<BrickochetShrapnelSet.getCount();%i++) {
+		%row = BrickochetShrapnelSet.getObject(%i);
+		if(isObject(%row.projectile)) {
+			%row.projectile.delete();
 		}
 	}
+	BrickochetShrapnelSet.clear();
 
 	%this.allowProjectiles = 0;
 	if(%this.numMembers > 0) {

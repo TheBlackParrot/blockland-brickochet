@@ -88,7 +88,25 @@ function serverCmdChangeColor(%this) {
 		}
 	}
 
-	serverCmdChangeSymbol(%this,1);
+	if(isObject(%this.projectile)) {
+		%obj = %this.projectile;
+
+		%obj.setName("OldProjectile");
+		
+		%proj = new Projectile(TempProjectile : OldProjectile) {
+			dataBlock = "takeGameProjProjectile" @ %this.color;
+			initialPosition = %obj.getPosition();
+			initialVelocity = %obj.getVelocity();
+			originPoint = %obj.getPosition();
+		};
+		MissionCleanup.add(%proj);
+		%proj.setName("Laser" @ %proj.getID());
+		%this.projectile = %proj;
+		%proj.checkPosition();
+		%obj.delete();
+	}
+
+	serverCmdUnuseTool(%this);
 }
 
 function serverCmdHelp(%this) {
@@ -102,6 +120,23 @@ function serverCmdHelp(%this) {
 
 	while(!%file.isEOF()) {
 		//messageClient(%this,'',strReplace(%file.readLine(),"%%VERSION",$Mining::Version));
+		messageClient(%this,'',%file.readLine());
+	}
+
+	%file.close();
+	%file.delete();
+}
+
+function serverCmdChangelog(%this) {
+	if(getSimTime() - %this.lastCommandCalledAt < 500) {
+		return;
+	}
+	%this.lastCommandCalledAt = getSimTime();
+
+	%file = new FileObject();
+	%file.openForRead($Take::Root @ "/changelog.txt");
+
+	while(!%file.isEOF()) {
 		messageClient(%this,'',%file.readLine());
 	}
 

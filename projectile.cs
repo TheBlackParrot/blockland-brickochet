@@ -85,6 +85,10 @@ datablock ExplosionData(takeGameProjExplosion)
 	lightEndColor = "0 0 0";
 };
 
+if(!isObject(BrickochetShrapnelSet)) {
+	$Take::ShrapnelSet = new SimSet(BrickochetShrapnelSet);
+}
+
 //bullet trail effects
 function createDynamicTGProjectiles() {
 	$Take::initDatablocks = 1;
@@ -230,17 +234,18 @@ if(!$Take::initDatablocks) {
 package takeGameProjPackage {
 	function Projectile::onAdd(%this,%obj) {
 		if(%obj.getDatablock().classname $= "takeGameProjProjectileClass") {
-			%obj.schedule(29999,duplicate);
 			%obj.checkPosition();
 			%obj.client.projectile = %obj;
 			%obj.setName("Laser" @ %obj.getID());
 		}
 		if(%obj.getDatablock().classname $= "takeGameProjShrapnelClass") {
-			if($Take::Shrapnel $= "") {
-				$Take::Shrapnel = "S" @ %obj @ "S";
-			} else {
-				$Take::Shrapnel = "S" @ %obj @ "S" SPC $Take::Shrapnel;
-			}
+			%row = new ScriptObject(BrickochetShrapnelLink) {
+				projectile = %obj;
+				owner = %obj.client;
+				createdAt = getSimTime();
+			};
+			BrickochetShrapnelSet.add(%row);
+			%obj.setLink = %row;
 		}
 		return parent::onAdd(%this,%obj);
 	}
@@ -375,30 +380,6 @@ function takeGameProjProjectileClass::onExplode(%this,%obj) {
 	}
 }
 
-function Projectile::duplicate(%this) {
-	%client = %this.client;
-
-	%proj = new Projectile(TempProjectile) {
-		dataBlock = %this.dataBlock;
-		initialPosition = %this.getPosition();
-		initialVelocity = %this.getLastImpactVelocity();
-		position = %this.getPosition();
-		rotation = %this.rotation;
-		scale = "1 1 1";
-		sourceObject = %this.sourceObject;
-		sourceSlot = %this.sourceSlot;
-		client = %client;
-		originPoint = %this.getPosition();
-		sourceClient = %this.sourceClient;
-		combo = %this.combo;
-	};
-	MissionCleanup.add(%proj);
-	%proj.setName("Laser" @ %proj.getID());
-	%client.projectile = %proj;
-	%proj.checkPosition();
-	%this.delete();
-}
-
 function Sky::flashColor(%this,%client,%step) {
 	%maxsteps = mCeil(mCeil(30/$DefaultMinigame.numMembers)/1.5);
 	cancel(%this.flashSched);
@@ -453,19 +434,24 @@ function Projectile::checkPosition(%this) {
 	}
 }
 
+function Projectile::removeFromShrapnelList(%this) {
+	// i'm assuming TGE won't allow this to be perfect
+	for(%i=0;%i<BrickochetShrapnelSet.getCount();%i++) {
+		%row = BrickochetShrapnelSet.getObject(%i);
+		if(isObject(%row.projectile)) {
+			if(%row.projectile == %this) {
+				%row.delete();
+			}
+		} else {
+			%row.delete();
+		}
+	}
+}
+
 package BrickochetProjectilePackage {
 	function Projectile::delete(%this) {
 		if(%this.getDatablock().classname $= "takeGameProjShrapnelClass") {
-			%str = "S" @ %this @ "S";
-			if(stripos($Take::Shrapnel,%str) != -1) {
-				for(%i=0;%i<getWordCount($Take::Shrapnel);%i++) {
-					%obj = strReplace(getWord($Take::Shrapnel,%i),"S","");
-					if(%obj == %this) {
-						$Take::Shrapnel = removeWord($Take::Shrapnel,%i);
-						break;
-					}
-				}
-			}
+			%this.removeFromShrapnelList();
 		}
 		parent::delete(%this);
 	}
@@ -477,6 +463,9 @@ package BrickochetProjectilePackage {
 		if(%this.markedForExplosion) {
 			parent::explode(%this);
 			return;
+		}
+		if(%this.getDatablock().classname $= "takeGameProjShrapnelClass") {
+			%this.removeFromShrapnelList();
 		}
 	}
 };
