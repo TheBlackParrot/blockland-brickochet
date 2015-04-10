@@ -9,7 +9,7 @@ $Pref::Take::DefaultColor = 0;
 $Pref::Take::PlayAreaSize = 375;
 $Pref::Take::PlayAreaHeight = 175;
 
-$Take::Version = "v0.1.7-3";
+$Take::Version = "v0.1.8-1";
 
 datablock AudioProfile(takeJumpSound:combo1) { filename = "./sounds/jump.wav"; };
 
@@ -187,6 +187,20 @@ function MinigameSO::addBombs(%this,%override) {
 	spawnRandomCubes(%amount,1);
 }
 
+function Player::checkInsideBrick(%this) {
+	if(!%this.client.enableFloat) {
+		return;
+	}
+
+	cancel(%this.brickInLoop);
+	%this.brickInLoop = %this.schedule(70,checkInsideBrick);
+
+	initContainerBoxSearch(%this.getPosition(),"0.1 0.1 0.1",$TypeMasks::FXBrickObjectType);
+	if((%targetObject = containerSearchNext()) != 0 && isObject(%targetObject)) {
+		%this.addVelocity(vectorScale("0 0 1", (%this.getDatablock().jumpForce / %this.getDatablock().mass)/4));
+	}
+}
+
 package TakeGamePackage {
 	function GameConnection::autoAdminCheck(%this) {
 		for(%i=0;%i<$DefaultMinigame.numMembers;%i++) {
@@ -212,6 +226,7 @@ package TakeGamePackage {
 		%this.player.setShapeNameDistance(2000);
 		%this.player.setTransform(getRandom($Pref::Take::PlayAreaSize/4,$Pref::Take::PlayAreaSize/2) SPC getRandom($Pref::Take::PlayAreaSize/4,$Pref::Take::PlayAreaSize/2) SPC 3);
 		%this.player.setPlayerScale("0.25 0.25 0.25");
+		%this.player.checkInsideBrick();
 		if(!isEventPending(%this.statsLoop)) {
 			%this.doBottomStats();
 			%this.doStatValuesLoop();

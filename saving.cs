@@ -8,6 +8,7 @@ function GameConnection::saveTakeGame(%this) {
 	%file.writeLine("client" TAB "highestCombo" TAB (%this.highestCombo | 0) TAB "int");
 	%file.writeLine("client" TAB "wins" TAB (%this.wins | 0) TAB "int");
 	%file.writeLine("client" TAB "losses" TAB (%this.losses | 0) TAB "int");
+	%file.writeLine("client" TAB "enableFloat" TAB (%this.enableFloat | 0) TAB "bool");
 
 	%file.close();
 	%file.delete();

@@ -162,3 +162,22 @@ function serverCmdLeaderboard(%this) {
 	}
 }
 function serverCmdLB(%this) {serverCmdLeaderboard(%this);}
+
+function serverCmdToggleFloat(%this) {
+	switch(%this.enableFloat) {
+		case 0:
+			%this.enableFloat = 1;
+			if(isObject(%this.player)) {
+				%this.player.checkInsideBrick();
+			}
+			messageClient(%this,'',"\c6You have \c2enabled \c6float mode.");
+		case 1:
+			%this.enableFloat = 0;
+			if(isObject(%this.player)) {
+				if(isEventPending(%this.player.brickInLoop)) {
+					cancel(%this.player.brickInLoop);
+				}
+			}
+			messageClient(%this,'',"\c6You have \c0disabled \c6float mode.");
+	}
+}

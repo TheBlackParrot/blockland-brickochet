@@ -20,4 +20,5 @@
 <color:ffee00>/changelog <color:ffffff>-- View updates to the gamemode and server.
 <color:ffee00>/leaderboard <color:ffffff>-- Shows the current leaderboard.
 <color:ffee00>/help <color:ffffff>-- This command you're reading.
+<color:ffee00>/togglefloat <color:ffffff>-- Toggles float mode. When on, while you are inside bricks, you will be pushed up at a constant rate similar to jumping. (off by default)
 <color:0000ff>================
