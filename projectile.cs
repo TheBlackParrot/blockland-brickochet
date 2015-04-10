@@ -230,6 +230,7 @@ if(!$Take::initDatablocks) {
 package takeGameProjPackage {
 	function Projectile::onAdd(%this,%obj) {
 		if(%obj.getDatablock().classname $= "takeGameProjProjectileClass") {
+			%obj.schedule(29999,duplicate);
 			%obj.checkPosition();
 			%obj.client.projectile = %obj;
 			%obj.setName("Laser" @ %obj.getID());
@@ -372,26 +373,30 @@ function takeGameProjProjectileClass::onExplode(%this,%obj) {
 		%client.saveTakeGame();
 		return;
 	}
+}
+
+function Projectile::duplicate(%this) {
+	%client = %this.client;
 
 	%proj = new Projectile(TempProjectile) {
-		dataBlock = %obj.dataBlock;
-		initialPosition = %obj.getPosition();
-		initialVelocity = %obj.getVelocity();
-		position = %obj.getPosition();
-		rotation = %obj.rotation;
+		dataBlock = %this.dataBlock;
+		initialPosition = %this.getPosition();
+		initialVelocity = %this.getLastImpactVelocity();
+		position = %this.getPosition();
+		rotation = %this.rotation;
 		scale = "1 1 1";
-		sourceObject = %obj.sourceObject;
-		sourceSlot = %obj.sourceSlot;
-		client = %obj.client;
-		originPoint = %obj.getPosition();
-		sourceClient = %obj.sourceClient;
-		combo = %obj.combo;
+		sourceObject = %this.sourceObject;
+		sourceSlot = %this.sourceSlot;
+		client = %client;
+		originPoint = %this.getPosition();
+		sourceClient = %this.sourceClient;
+		combo = %this.combo;
 	};
 	MissionCleanup.add(%proj);
 	%proj.setName("Laser" @ %proj.getID());
 	%client.projectile = %proj;
 	%proj.checkPosition();
-	%obj.delete();
+	%this.delete();
 }
 
 function Sky::flashColor(%this,%client,%step) {
@@ -473,28 +478,6 @@ package BrickochetProjectilePackage {
 			parent::explode(%this);
 			return;
 		}
-		//%name = "Laser" @ %this.getID();
-		%proj = new Projectile(TempProjectile) {
-			dataBlock = %this.dataBlock;
-			initialPosition = %this.initialPosition;
-			initialVelocity = %this.initialVelocity;
-			position = %this.getPosition();
-			rotation = %this.rotation;
-			scale = "1 1 1";
-			sourceObject = %this.sourceObject;
-			sourceSlot = %this.sourceSlot;
-			client = %this.client;
-			originPoint = %this.originPoint;
-			sourceClient = %this.sourceClient;
-			combo = %this.combo;
-		};
-		MissionCleanup.add(%proj);
-		%proj.setName("Laser" @ %proj.getID());
-
-		%this.client.projectile = %proj;
-		%proj.checkPosition();
-
-		%this.delete();
 	}
 };
 activatePackage(BrickochetProjectilePackage);
