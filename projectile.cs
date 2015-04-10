@@ -15,6 +15,10 @@ datablock AudioProfile(takeShrapnelHit:combo1) { filename = "./sounds/shrapnel_h
 datablock AudioProfile(takeProjFire:combo1) { filename = "./sounds/fire.wav"; };
 datablock AudioProfile(takeProjHitBomb:combo1) { filename = "./sounds/bomb.wav"; };
 datablock AudioProfile(takeProjHitSteal:combo1) { filename = "./sounds/steal.wav"; };
+datablock AudioProfile(laserhum:combo1) {
+	filename = "./sounds/laser_hum.wav";
+	description = AudioClosestLooping3d;
+};
 
 datablock ParticleData(takeGameProjExplosionParticle)
 {
@@ -162,7 +166,7 @@ function createDynamicTGProjectiles() {
 			brickExplosionMaxVolume = 0;          //max volume of bricks that we can destroy
 			brickExplosionMaxVolumeFloating = 0;  //max volume of bricks that we can destroy if they aren't connected to the ground (should always be >= brickExplosionMaxVolume)
 
-			sound = "";
+			sound = laserhum;
 
 			muzzleVelocity      = 200;
 			velInheritFactor    = 1.0;

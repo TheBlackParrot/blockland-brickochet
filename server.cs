@@ -9,9 +9,13 @@ $Pref::Take::DefaultColor = 0;
 $Pref::Take::PlayAreaSize = 375;
 $Pref::Take::PlayAreaHeight = 175;
 
-$Take::Version = "v0.1.8-1";
+$Take::Version = "v0.1.9-1";
 
 datablock AudioProfile(takeJumpSound:combo1) { filename = "./sounds/jump.wav"; };
+datablock AudioProfile(floathum:combo1) {
+	filename = "./sounds/float_hum.wav";
+	description = AudioClosestLooping3d;
+};
 
 PlayerStandardArmor.airControl = 1;
 PlayerStandardArmor.horizMaxSpeed = 272;
@@ -198,6 +202,16 @@ function Player::checkInsideBrick(%this) {
 	initContainerBoxSearch(%this.getPosition(),"0.1 0.1 0.1",$TypeMasks::FXBrickObjectType);
 	if((%targetObject = containerSearchNext()) != 0 && isObject(%targetObject)) {
 		%this.addVelocity(vectorScale("0 0 1", (%this.getDatablock().jumpForce / %this.getDatablock().mass)/4));
+		if(!%this.playingFloat) {
+			%this.playingFloat = 1;
+			%this.playAudio(0,floathum);
+		}
+		return;
+	} else {
+		if(%this.playingFloat) {
+			%this.stopAudio(0);
+			%this.playingFloat = 0;
+		}
 	}
 }
 
