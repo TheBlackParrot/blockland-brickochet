@@ -9,7 +9,7 @@ $Pref::Take::DefaultColor = 0;
 $Pref::Take::PlayAreaSize = 375;
 $Pref::Take::PlayAreaHeight = 175;
 
-$Take::Version = "v0.1.6-1";
+$Take::Version = "v0.1.7-3";
 
 datablock AudioProfile(takeJumpSound:combo1) { filename = "./sounds/jump.wav"; };
 
@@ -107,15 +107,12 @@ function GameConnection::doBottomStats(%this) {
 
 	if(isObject(%this.projectile)) {
 		%projtime = mFloatLength((getSimTime() - %this.firedAt)/1000,1);
-		
-		%vel = %this.projectile.getVelocity();
-		%speed = mFloatLength((mAbs(getWord(%vel,0)) + mAbs(getWord(%vel,1)) + mAbs(getWord(%vel,2)))/3,1);
-
-		%combo = "\c7" @ %projtime @ "  \c3" @ %speed @ "tu  \c0" @ (%this.projectile.combo | 0) @ "x";
+		%vel = mFloatLength(vectorLen(%this.projectile.getVelocity()),1);
+		%projinfo = "\c7" @ %projtime @ "  \c3" @ %vel @ "tu  \c0" @ (%this.projectile.combo | 0) @ "x";
 	} else {
-		%combo = "\c2" @ (%this.projectile.combo | 0) @ "x";
+		%projinfo = "\c2" @ (%this.projectile.combo | 0) @ "x";
 	}
-	%this.bottomPrint("<font:Arial Bold:48>" @ %color @ getPositionString(%rank) @ "    <font:Arial Bold:32><color:ffffff>" @ %shadow @ %this.amountHas @ "<shadow:0:0><font:Arial Bold:24>" @ %color @ " [" @ %this.perc[1] @ "%]<just:right><font:Arial Bold:18>" @ %combo @ "    <font:Arial:14>\c6" SPC %time @ " ",3,1);
+	%this.bottomPrint("<font:Arial Bold:48>" @ %color @ getPositionString(%rank) @ "    <font:Arial Bold:32><color:ffffff>" @ %shadow @ %this.amountHas @ "<shadow:0:0><font:Arial Bold:24>" @ %color @ " [" @ %this.perc[1] @ "%]<just:right><font:Arial Bold:18>" @ %projinfo @ "    <font:Arial:14>\c6" SPC %time @ " ",3,1);
 
 	%this.oldRank = %this.getRank();
 }
@@ -145,18 +142,20 @@ function MinigameSO::showRoundStats(%this) {
 }
 
 function MinigameSO::endRound(%this) {
-	%highest = 0;
+	%highest[client] = getClientFromRank(1);
+	%highest[val] = %highest[client].amountHas;
+	%highest[client].wins++;
+
 	for(%i=0;%i<%this.numMembers;%i++) {
 		%client = %this.member[%i];
 		if(isObject(%client.projectile)) {
 			%client.projectile.explode();
 		}
-
-		if(%client.amountHas > %highest[val]) {
-			%highest[val] = %client.amountHas;
-			%highest[client] = %client;
+		if(%client != %highest[client]) {
+			%client.losses++;
 		}
 	}
+
 	for(%i=0;%i<BrickochetShrapnelSet.getCount();%i++) {
 		%row = BrickochetShrapnelSet.getObject(%i);
 		if(isObject(%row.projectile)) {
@@ -175,7 +174,7 @@ function MinigameSO::endRound(%this) {
 	cancel(%this.bombAddLoop);
 
 	%color = "<color:" @ RGBToHex(getColorIDTable(%highest[client].color)) @ ">";
-	%this.messageAll('',%color @ %highest[client].name SPC "\c6wins this round, owning\c3" SPC mFloor(%highest[client].getPercentageValue("players")*10)/10 @ "% \c6of the board.");
+	%this.messageAll('',%color @ %highest[client].name SPC "\c6wins this round, owning\c3" SPC mFloor(%highest[client].getPercentageValue("players")*10)/10 @ "% \c6of the board. They have won\c3" SPC %highest[client].wins SPC "time(s).");
 	%this.messageAll('',"\c5Resetting in \c310 seconds...");
 }
 
