@@ -59,7 +59,7 @@ function serverCmdChangeColor(%this, %col) {
 		messageClient(%client,'',"You must be in the game to change your color.");
 		return;
 	}
-	if(getSimTime() - %this.lastColorChange < 30000) {
+	if($Sim::Time - %this.lastColorChange < 30000) {
 		messageClient(%client,'',"You can only change your color every 30 seconds.");
 		return;
 	}
@@ -84,7 +84,7 @@ function serverCmdChangeColor(%this, %col) {
 	}
 	%this.color = %color;
 	%this.player.setShapeNamecolor(getColorIDTable(%color));
-	%this.lastColorChange = getSimTime();
+	%this.lastColorChange = $Sim::Time;
 
 	for(%i=0;%i<BrickGroup_888888.getCount();%i++) {
 		%brick = BrickGroup_888888.getObject(%i);
