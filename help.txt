@@ -16,7 +16,7 @@
 <color:ffffff>Your data is fine, trust me.
 <color:ff00ff>==-- COMMANDS --==
 <color:ffee00>/cancel <color:ffffff>-- Cancels your current laser.
-<color:ffee00>/changeColor <color:ffffff>-- Changes the color you use in the game. <color:44bbff>USE THE PAINT CAN TO CHOOSE A COLOR. You CANNOT choose the first color.
+<color:ffee00>/changeColor <color:ff00ff>[num (optional)] <color:ffffff>-- Changes the color you use in the game. <color:44bbff>USE THE PAINT CAN TO CHOOSE A COLOR. You CANNOT choose the first color.
 <color:ffee00>/changelog <color:ffffff>-- View updates to the gamemode and server.
 <color:ffee00>/leaderboard <color:ffffff>-- Shows the current leaderboard.
 <color:ffee00>/help <color:ffffff>-- This command you're reading.

@@ -54,7 +54,7 @@ if($_byte_list $= ""){
 	}
 }
 
-function serverCmdChangeColor(%this) {
+function serverCmdChangeColor(%this, %col) {
 	if(!isObject(%this.player)) {
 		messageClient(%client,'',"You must be in the game to change your color.");
 		return;
@@ -64,7 +64,12 @@ function serverCmdChangeColor(%this) {
 		return;
 	}
 
-	%color = %this.player.currSprayCan;
+	if(%col $= "") {
+		%color = %this.player.currSprayCan;
+	} else {
+		%color = %col-1;
+	}
+
 	if(%color < 1 || %color > 63) {
 		%color = 1;
 	}
