@@ -13,3 +13,4 @@
 <color:22ffaa>v0.1.7 <color:999999>[04/09/2015] <color:ffffff>-- wins/losses now tracked and saved, corrected speed display
 <color:22ffaa>v0.1.8 <color:999999>[04/10/2015] <color:ffffff>-- bricks can now optionally help you fly up
 <color:22ffaa>v0.1.9 <color:999999>[04/10/2015] <color:ffffff>-- more sounds
+<color:22ffaa>v0.1.9-2 <color:999999>[07/27/2017] <color:ffffff>-- left a command in a broken state for 2 years my bad bro
