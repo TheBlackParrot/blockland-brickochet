@@ -59,7 +59,7 @@ function serverCmdChangeColor(%this, %col) {
 		messageClient(%this,'',"You must be in the game to change your color.");
 		return;
 	}
-	if($Sim::Time - %this.lastColorChange < 30000) {
+	if($Sim::Time - %this.lastColorChange < 30) {
 		messageClient(%this,'',"You can only change your color every 30 seconds.");
 		return;
 	}
