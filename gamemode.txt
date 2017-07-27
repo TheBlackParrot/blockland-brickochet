@@ -12,7 +12,7 @@ ADDON Particle_Tools
 ADDON Sound_Synth4
 
 // custom stuff
-ADDON Server_CloudPreferences
+//ADDON Server_CloudPreferences
 
 // gamemode scripts
 ADDON Gamemode_Brickochet

@@ -56,11 +56,11 @@ if($_byte_list $= ""){
 
 function serverCmdChangeColor(%this, %col) {
 	if(!isObject(%this.player)) {
-		messageClient(%client,'',"You must be in the game to change your color.");
+		messageClient(%this,'',"You must be in the game to change your color.");
 		return;
 	}
 	if($Sim::Time - %this.lastColorChange < 30000) {
-		messageClient(%client,'',"You can only change your color every 30 seconds.");
+		messageClient(%this,'',"You can only change your color every 30 seconds.");
 		return;
 	}
 
@@ -75,9 +75,9 @@ function serverCmdChangeColor(%this, %col) {
 	}
 
 	for(%i=0;%i<$DefaultMinigame.numMembers;%i++) {
-		%client = $DefaultMinigame.member[%i];
+		%this = $DefaultMinigame.member[%i];
 		// adding C makes things a lot easier later
-		if(%color == %client.color) {
+		if(%color == %this.color) {
 			messageClient(%this,'',"This color is already taken.");
 			return;
 		}
